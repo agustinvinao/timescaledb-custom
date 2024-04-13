@@ -18,3 +18,8 @@ services:
       POSTGRES_PASSWORD: 123456
     volumes:
       - ./data/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'hot_raw_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5

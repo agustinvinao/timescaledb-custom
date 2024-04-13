@@ -75,6 +75,10 @@ RUN set -ex \
         /build \
     && sed -r -i "s/[#]*\s*(shared_preload_libraries)\s*=\s*'(.*)'/\1 = 'timescaledb,\2'/;s/,'/'/" /usr/share/postgresql/postgresql.conf.sample
 
+# FROM timescale/timescaledb:latest-pg14-bitnami
+
+# USER root
+
 ARG PG_VERSION
 RUN apt-get update && \
     apt-get install -y \
@@ -84,16 +88,18 @@ RUN apt-get update && \
     lsb-release \
     dialog \
     apt-utils \
-    postgresql-plpython3-${PG_VERSION} \
-    postgresql-${PG_VERSION}-cron \
     vim \
+    curl ca-certificates \
+    gnupg \
     && apt-get clean all
+
 
 RUN echo "deb https://packagecloud.io/timescale/timescaledb/debian/ $(lsb_release -c -s) main" | tee /etc/apt/sources.list.d/timescaledb.list
 RUN wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | gpg --dearmor -o /etc/apt/trusted.gpg.d/timescaledb.gpg
-
-RUN apt-get update && \
-    apt-get install -y \
+    
+RUN apt-get update && apt-get install -y \
+    postgresql-plpython3-${PG_VERSION} \
+    postgresql-${PG_VERSION}-cron \
     timescaledb-toolkit-postgresql-${PG_VERSION} \
     && apt-get clean all
 
