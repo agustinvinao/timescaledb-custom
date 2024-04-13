@@ -7,8 +7,8 @@ ARG TS_VERSION
 ARG GO_VERSION=1.19.1
 FROM golang:${GO_VERSION}-alpine AS tools
 
-ARG TIMESCALEDB_TUNE_VERSION=v0.14.2
-ARG TIMESCALEDB_PARALLELCOPY_VERSION=v0.4.0
+ARG TIMESCALEDB_TUNE_VERSION=v0.16.0
+ARG TIMESCALEDB_PARALLELCOPY_VERSION=v0.5.1
 
 ENV TOOLS_VERSION 0.8.1
 
@@ -92,10 +92,9 @@ RUN apt-get update && \
 RUN echo "deb https://packagecloud.io/timescale/timescaledb/debian/ $(lsb_release -c -s) main" | tee /etc/apt/sources.list.d/timescaledb.list
 RUN wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | gpg --dearmor -o /etc/apt/trusted.gpg.d/timescaledb.gpg
 
-
 RUN apt-get update && \
     apt-get install -y \
-    timescaledb-toolkit-postgresql-14 \
+    timescaledb-toolkit-postgresql-${PG_VERSION} \
     && apt-get clean all
 
 RUN echo "cron.database_name = 'postgres'" >> /var/lib/postgresql/data/postgresql.conf 
@@ -103,3 +102,25 @@ RUN echo "cron.timezone = 'Europe/Dublin'" >> /var/lib/postgresql/data/postgresq
 RUN sed -i "s/shared_preload_libraries = 'timescaledb'/shared_preload_libraries = 'timescaledb,pg_cron'/g" /var/lib/postgresql/data/postgresql.conf
 RUN sed -i "s/log_timezone = 'Etc\/UTC'/log_timezone = 'Europe\/Dublin'/g" /var/lib/postgresql/data/postgresql.conf
 RUN sed -i "s/timezone = 'Etc\/UTC'/timezone = 'Europe\/Dublin'/g" /var/lib/postgresql/data/postgresql.conf
+
+# RUN curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash
+################################
+# timescaledb-toolkit Compoiling
+################################
+
+# RUN apt-get update && \
+#     apt-get install -y \
+#     pkg-config libssl-dev \
+#     && apt-get clean all
+
+# ENV PATH="/root/.cargo/bin:$PATH"
+# RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y 
+# # --default-toolchain stable
+# RUN cargo install --version '=0.10.2' --force cargo-pgrx
+# RUN cargo pgrx init --pg${PG_VERSION} pg_config
+
+# RUN git clone https://github.com/timescale/timescaledb-toolkit /timescaledb-toolkit/extension
+# WORKDIR /timescaledb-toolkit/extension
+
+# RUN cargo pgrx install --release && \
+#     cargo run --manifest-path ../tools/post-install/Cargo.toml -- pg_config
