@@ -93,13 +93,13 @@ RUN apt-get update && \
     gnupg \
     && apt-get clean all
 
-
-RUN echo "deb https://packagecloud.io/timescale/timescaledb/debian/ $(lsb_release -c -s) main" | tee /etc/apt/sources.list.d/timescaledb.list
 RUN wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | gpg --dearmor -o /etc/apt/trusted.gpg.d/timescaledb.gpg
+RUN echo "deb https://packagecloud.io/timescale/timescaledb/debian/ $(lsb_release -c -s) main" | tee /etc/apt/sources.list.d/timescaledb.list
+# RUN curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash
     
 RUN apt-get update && apt-get install -y \
-    postgresql-plpython3-${PG_VERSION} \
     postgresql-${PG_VERSION}-cron \
+    postgresql-plpython3-${PG_VERSION} \
     timescaledb-toolkit-postgresql-${PG_VERSION} \
     && apt-get clean all
 
