@@ -105,7 +105,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN echo "cron.database_name = 'postgres'" >> /var/lib/postgresql/data/postgresql.conf 
 RUN echo "cron.timezone = 'Europe/Dublin'" >> /var/lib/postgresql/data/postgresql.conf
-RUN sed -i "s/shared_preload_libraries = 'timescaledb'/shared_preload_libraries = 'timescaledb,pg_cron'/g" /var/lib/postgresql/data/postgresql.conf
+RUN sed -i "s/shared_preload_libraries = 'timescaledb'/shared_preload_libraries = 'timescaledb,pg_cron,pg_stat_statements'/g" /var/lib/postgresql/data/postgresql.conf
 RUN sed -i "s/log_timezone = 'Etc\/UTC'/log_timezone = 'Europe\/Dublin'/g" /var/lib/postgresql/data/postgresql.conf
 RUN sed -i "s/timezone = 'Etc\/UTC'/timezone = 'Europe\/Dublin'/g" /var/lib/postgresql/data/postgresql.conf
 
